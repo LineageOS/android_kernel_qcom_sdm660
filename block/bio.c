@@ -2007,9 +2007,9 @@ int bio_associate_blkcg_from_page(struct bio *bio, struct page *page)
 
 	if (unlikely(bio->bi_css))
 		return -EBUSY;
-	if (!page->mem_cgroup)
+	if (!page_memcg(page))
 		return 0;
-	blkcg_css = cgroup_get_e_css(page->mem_cgroup->css.cgroup,
+	blkcg_css = cgroup_get_e_css(page_memcg(page)->css.cgroup,
 				     &io_cgrp_subsys);
 	bio->bi_css = blkcg_css;
 	return 0;
