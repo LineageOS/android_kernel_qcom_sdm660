@@ -2694,7 +2694,7 @@ int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
 	if (!mem_cgroup_is_root(memcg)) {
 		ret = memcg_kmem_charge_memcg(page, gfp, order, memcg);
 		if (!ret)
-			__SetPageKmemcg(page);
+			page->memcg_data |= MEMCG_DATA_KMEM;
 	}
 	css_put(&memcg->css);
 	return ret;
@@ -2722,10 +2722,6 @@ void memcg_kmem_uncharge(struct page *page, int order)
 		page_counter_uncharge(&memcg->memsw, nr_pages);
 
 	page->memcg_data = 0;
-
-	/* slab pages do not have PageKmemcg flag set */
-	if (PageKmemcg(page))
-		__ClearPageKmemcg(page);
 
 	css_put_many(&memcg->css, nr_pages);
 }
@@ -6224,7 +6220,7 @@ static void uncharge_page(struct page *page, struct uncharge_gather *ug)
 		ug->memcg = page_memcg(page);
 	}
 
-	if (!PageKmemcg(page)) {
+	if (!PageMemcgKmem(page)) {
 		unsigned int nr_pages = 1;
 
 		if (PageTransHuge(page)) {
@@ -6241,7 +6237,6 @@ static void uncharge_page(struct page *page, struct uncharge_gather *ug)
 		ug->pgpgout++;
 	} else {
 		ug->nr_kmem += 1 << compound_order(page);
-		__ClearPageKmemcg(page);
 	}
 
 	ug->dummy_page = page;

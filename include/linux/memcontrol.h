@@ -323,6 +323,15 @@ struct mem_cgroup {
 
 extern struct mem_cgroup *root_mem_cgroup;
 
+enum page_memcg_data_flags {
+	/* page has been accounted as a non-slab kernel page */
+	MEMCG_DATA_KMEM = (1UL << 0),
+	/* the next bit after the last actual flag */
+	__NR_MEMCG_DATA_FLAGS  = (1UL << 1),
+};
+
+#define MEMCG_DATA_FLAGS_MASK (__NR_MEMCG_DATA_FLAGS - 1)
+
 /*
  * page_memcg - get the memory cgroup associated with a page
  * @page: a pointer to the page struct
@@ -339,7 +348,8 @@ extern struct mem_cgroup *root_mem_cgroup;
  */
 static inline struct mem_cgroup *page_memcg(struct page *page)
 {
-	return (struct mem_cgroup *)page->memcg_data;
+	return (struct mem_cgroup *)(page->memcg_data &
+				     ~MEMCG_DATA_FLAGS_MASK);
 }
 
 /*
@@ -354,7 +364,21 @@ static inline struct mem_cgroup *page_memcg_rcu(struct page *page)
 {
 	WARN_ON_ONCE(!rcu_read_lock_held());
 
-	return (struct mem_cgroup *)READ_ONCE(page->memcg_data);
+	return (struct mem_cgroup *)(READ_ONCE(page->memcg_data) &
+				     ~MEMCG_DATA_FLAGS_MASK);
+}
+
+/*
+ * PageMemcgKmem - check if the page has MemcgKmem flag set
+ * @page: a pointer to the page struct
+ *
+ * Checks if the page has MemcgKmem flag set. The caller must ensure that
+ * the page has an associated memory cgroup. It's not safe to call this function
+ * against some types of pages, e.g. slab pages.
+ */
+static inline bool PageMemcgKmem(struct page *page)
+{
+	return page->memcg_data & MEMCG_DATA_KMEM;
 }
 
 static inline bool mem_cgroup_is_root(struct mem_cgroup *memcg)
@@ -858,6 +882,11 @@ static inline struct mem_cgroup *page_memcg_rcu(struct page *page)
 {
 	WARN_ON_ONCE(!rcu_read_lock_held());
 	return NULL;
+}
+
+static inline bool PageMemcgKmem(struct page *page)
+{
+	return false;
 }
 
 static inline bool mem_cgroup_is_root(struct mem_cgroup *memcg)
