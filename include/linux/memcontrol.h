@@ -323,6 +323,22 @@ struct mem_cgroup {
 
 extern struct mem_cgroup *root_mem_cgroup;
 
+enum page_memcg_data_flags {
+	/*
+	 * page->memcg_data is a pointer to an objcgs vector.
+	 *
+	 * Reserved but never set in this tree: it predates the 5.9 slab
+	 * memory controller, so slab pages store a plain mem_cgroup pointer
+	 * and there is no objcgs vector sharing page->memcg_data. The bit is
+	 * kept so that flag numbering matches upstream.
+	 */
+	MEMCG_DATA_OBJCGS = (1UL << 0),
+	/* the next bit after the last actual flag */
+	__NR_MEMCG_DATA_FLAGS  = (1UL << 1),
+};
+
+#define MEMCG_DATA_FLAGS_MASK (__NR_MEMCG_DATA_FLAGS - 1)
+
 /*
  * page_memcg - get the memory cgroup associated with a page
  * @page: a pointer to the page struct
