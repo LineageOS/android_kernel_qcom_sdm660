@@ -724,7 +724,7 @@ iomap_set_page_dirty(struct page *page)
 		return !TestSetPageDirty(page);
 
 	/*
-	 * Lock out page->mem_cgroup migration to keep PageDirty
+	 * Lock out page->memcg_data migration to keep PageDirty
 	 * synchronized with per-memcg dirty page counters.
 	 */
 	lock_page_memcg(page);

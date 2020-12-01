@@ -62,7 +62,7 @@ static __always_inline struct mem_cgroup *mem_cgroup_from_kmem(void *ptr)
 	if (!memcg_kmem_enabled())
 		return NULL;
 	page = virt_to_head_page(ptr);
-	return page->mem_cgroup;
+	return page_memcg(page);
 }
 
 static inline struct list_lru_one *
