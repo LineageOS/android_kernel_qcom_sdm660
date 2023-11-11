@@ -16,6 +16,24 @@
       "message": "SDM660 doesn\u0027t support ipa3. So, these warns seem pointless to fix. In fact, I would suggest disabling the ipa3 driver.\nhttps://github.com/Atom-X-Devs/scarlet_xiaomi_sdm660/commit/397347cb9d6cbc4059d0b54959d9ed6a9e47de0c",
       "revId": "ea74063d2acf4fc4a5bc0c9bd5f572e6e18234b1",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "315e608f_029dd2b5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2023-11-11T16:16:01Z",
+      "side": 1,
+      "message": "I am simply picking the same commits across this kernel and qcom_sm8250 kernel since both are 4.19 and it makes it easier to diff between them. There\u0027s no harm leaving this here.",
+      "parentUuid": "f3b7103a_f4aa89a4",
+      "revId": "ea74063d2acf4fc4a5bc0c9bd5f572e6e18234b1",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
