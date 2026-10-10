@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2021 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2017-2020 The Linux Foundation. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -126,8 +126,8 @@ QDF_STATUS wlan_serialization_timer_destroy(
 		qdf_status =  QDF_STATUS_E_FAILURE;
 		goto error;
 	}
-	/* Wait till timeout CB is completed */
-	qdf_timer_sync_cancel(&ser_timer->timer);
+
+	qdf_timer_stop(&ser_timer->timer);
 	ser_timer->cmd = NULL;
 
 error:
@@ -157,9 +157,26 @@ QDF_STATUS wlan_serialization_cleanup_vdev_timers(
 	struct wlan_serialization_timer *ser_timer;
 	QDF_STATUS status = QDF_STATUS_SUCCESS;
 	uint32_t i = 0;
+	struct wlan_objmgr_pdev *pdev = NULL;
+	struct wlan_objmgr_psoc *psoc = NULL;
 
-	psoc_ser_obj = wlan_serialization_get_psoc_obj(
-			wlan_vdev_get_psoc(vdev));
+	pdev = wlan_vdev_get_pdev(vdev);
+	if (!pdev) {
+		QDF_BUG(0);
+		ser_err("pdev is null");
+		status = QDF_STATUS_E_FAILURE;
+		goto error;
+	}
+
+	psoc = wlan_pdev_get_psoc(pdev);
+	if (!psoc) {
+		QDF_BUG(0);
+		ser_err("psoc is null");
+		status = QDF_STATUS_E_FAILURE;
+		goto error;
+	}
+
+	psoc_ser_obj = wlan_serialization_get_psoc_obj(psoc);
 
 	if (!psoc_ser_obj) {
 		ser_err("Invalid psoc_ser_obj");
@@ -462,7 +479,7 @@ wlan_serialization_remove_cmd_from_queue(
 		goto error;
 
 	if (!queue || wlan_serialization_list_empty(queue)) {
-		ser_err("Empty queue");
+		ser_debug("Empty queue");
 		goto error;
 	}
 
@@ -752,6 +769,30 @@ bool wlan_serialization_match_cmd_pdev(qdf_list_node_t *nnode,
 
 	node_pdev = wlan_vdev_get_pdev(cmd_list->cmd.vdev);
 	if (node_pdev == pdev)
+		match_found = true;
+
+	return match_found;
+}
+
+bool wlan_serialization_match_cmd_blocking(
+		qdf_list_node_t *nnode,
+		enum wlan_serialization_node node_type)
+{
+	struct wlan_serialization_command_list *cmd_list = NULL;
+	bool match_found = false;
+
+	if (node_type == WLAN_SER_PDEV_NODE)
+		cmd_list =
+			qdf_container_of(nnode,
+					 struct wlan_serialization_command_list,
+					 pdev_node);
+	else
+		cmd_list =
+			qdf_container_of(nnode,
+					 struct wlan_serialization_command_list,
+					 vdev_node);
+
+	if (cmd_list->cmd.is_blocking)
 		match_found = true;
 
 	return match_found;

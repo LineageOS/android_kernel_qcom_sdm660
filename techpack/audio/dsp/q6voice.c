@@ -3223,7 +3223,7 @@ static int voice_send_cvp_register_cal_cmd(struct voice_data *v)
 		 v->dev_rx.dev_id);
 
 	if (col_data->cal_data.size >= MAX_COL_INFO_SIZE) {
-		pr_err("%s: Invalid cal data size %d!\n",
+		pr_err("%s: Invalid cal data size %ld!\n",
 			__func__, col_data->cal_data.size);
 		ret = -EINVAL;
 		goto unlock;
@@ -3390,7 +3390,7 @@ static int voice_send_cvp_register_vol_cal_cmd(struct voice_data *v)
 	}
 
 	if (col_data->cal_data.size >= MAX_COL_INFO_SIZE) {
-		pr_err("%s: Invalid cal data size %d!\n",
+		pr_err("%s: Invalid cal data size %ld!\n",
 			__func__, col_data->cal_data.size);
 		ret = -EINVAL;
 		goto unlock;

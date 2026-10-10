@@ -21,20 +21,12 @@
 / {
 	model = "Qualcomm Technologies, Inc. Khaje SoC";
 	compatible = "qcom,khaje";
-	qcom,msm-id = <518 0x10000>;
+	qcom,msm-id = <518 0x10000>, <586 0x10000>;
 	interrupt-parent = <&wakegic>;
 
 	#address-cells = <2>;
 	#size-cells = <2>;
 	memory { device_type = "memory"; reg = <0 0 0 0>; };
-
-	mem-offline {
-		compatible = "qcom,mem-offline";
-		offline-sizes = <0x1 0x40000000 0x0 0x40000000>,
-				<0x1 0xc0000000 0x0 0x80000000>,
-				<0x2 0xc0000000 0x1 0x40000000>;
-		granule = <512>;
-	};
 
 	aliases {
 		sdhc1 = &sdhc_1; /* SDC1 eMMC slot */
@@ -410,11 +402,6 @@
 			label = "cont_splash_region";
 		};
 
-		disp_rdump_memory: disp_rdump_region@5c000000 {
-			reg = <0x0 0x5c000000 0x0 0x00f00000>;
-			label = "disp_rdump_region";
-		};
-
 		dfps_data_memory: dfps_data_region@5cf00000 {
 			reg = <0x0 0x5cf00000 0x0 0x0100000>;
 			label = "dfps_data_region";
@@ -622,7 +609,7 @@
 		interrupts-extended = <&wakegic GIC_SPI 197
 						IRQ_TYPE_EDGE_RISING>;
 		reg = <0x45f01b8 0x1000>,
-			<0xf011008 0x4>;  /* MSM_APCS_GCC_BASE 4K */
+			<0xf111008 0x4>;  /* MSM_APCS_GCC_BASE 4K */
 		reg-names = "vmpm", "ipc";
 		qcom,num-mpm-irqs = <96>;
 		interrupt-controller;
@@ -1963,6 +1950,7 @@
 	qcom,chd_silver {
 		compatible = "qcom,core-hang-detect";
 		label = "silver";
+		cluster-id = <0>;
 		qcom,threshold-arr = <0x0f1880b0 0x0f1980b0
 				      0x0f1a80b0 0x0f1b80b0>;
 		qcom,config-arr = <0x0f1880b8 0x0f1980b8
@@ -1972,6 +1960,7 @@
 	qcom,chd_gold {
 		compatible = "qcom,core-hang-detect";
 		label = "gold";
+		cluster-id = <1>;
 		qcom,threshold-arr = <0x0f0880b0 0x0f0980b0
 				      0x0f0a80b0 0x0f0b80b0>;
 		qcom,config-arr = <0x0f0880b8 0x0f0980b8
@@ -3557,259 +3546,6 @@
 	qcom,demux {
 		compatible = "qcom,demux";
 	};
-
-tpdm_turing_llm: tpdm@8861000 {
-		compatible = "qcom,coresight-dummy";
-
-		coresight-name = "coresight-tpdm-turing_llm";
-		qcom,dummy-source;
-
-		port {
-			tpdm_turing_llm_out_funnel_turing: endpoint {
-				remote-endpoint =
-				<&funnel_turing_in_tpdm_turing_llm>;
-			};
-		};
-	};
-
-	/delete-node/ tpdm@8a58000;
-	tpdm_west: tpdm@8a58000 {
-		compatible = "arm,primecell";
-		arm,primecell-periphid = <0x000bb968>;
-		reg = <0x8a58000 0x1000>;
-		reg-names = "tpdm-base";
-
-		coresight-name = "coresight-tpdm-west";
-
-		clocks = <&rpmcc RPM_SMD_QDSS_CLK>;
-		clock-names = "apb_pclk";
-		port {
-			tpdm_west_out_tpda11: endpoint {
-				remote-endpoint =
-				<&tpda11_in_tpdm_west>;
-			};
-		};
-	};
-
-	tpdm_spdm: tpdm@800f000 {
-		compatible = "arm,primecell";
-		arm,primecell-periphid = <0x000bb968>;
-		reg = <0x0800f000 0x1000>;
-		reg-names = "tpdm-base";
-
-		coresight-name = "coresight-tpdm-spdm";
-
-		clocks = <&rpmcc RPM_SMD_QDSS_CLK>;
-		clock-names = "apb_pclk";
-		port {
-			tpdm_spdm_out_tpda13: endpoint {
-				remote-endpoint =
-				<&tpda13_in_tpdm_spdm>;
-			};
-		};
-	};
-
-	/delete-node/ funnel@8861000;
-	funnel_turing: funnel@8863000 {
-		compatible = "arm,primecell";
-		arm,primecell-periphid = <0x000bb908>;
-		reg = <0x8863000 0x1000>;
-		reg-names = "funnel-base";
-
-		coresight-name = "coresight-funnel-turing";
-
-		clocks = <&rpmcc RPM_SMD_QDSS_CLK>;
-		clock-names = "apb_pclk";
-		ports {
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			port@0 {
-				reg = <0>;
-				funnel_turing_out_funnel_qatb: endpoint {
-					remote-endpoint =
-					<&funnel_qatb_in_funnel_turing>;
-					source = <&turing_etm0>;
-				};
-			};
-
-			port@1 {
-				reg = <1>;
-				funnel_turing_out_tpda5: endpoint {
-					remote-endpoint =
-					<&tpda5_in_funnel_turing>;
-				};
-			};
-
-			port@2 {
-				reg = <0>;
-				funnel_turing_in_tpdm_turing: endpoint {
-					slave-mode;
-					remote-endpoint =
-					<&tpdm_turing_out_funnel_turing>;
-				};
-			};
-
-			port@3 {
-				reg = <1>;
-				funnel_turing_in_tpdm_turing_llm: endpoint {
-					slave-mode;
-					remote-endpoint =
-					<&tpdm_turing_llm_out_funnel_turing>;
-				};
-			};
-
-			port@4 {
-				reg = <2>;
-				funnel_turing_in_turing_etm0: endpoint {
-					slave-mode;
-					remote-endpoint =
-					<&turing_etm0_out_funnel_turing>;
-				};
-			};
-		};
-	};
-
-	/delete-node/ tpda@8004000;
-	tpda: tpda@8004000 {
-		compatible = "arm,primecell";
-		arm,primecell-periphid = <0x000bb969>;
-		reg = <0x8004000 0x1000>;
-		reg-names = "tpda-base";
-
-		coresight-name = "coresight-tpda";
-
-		qcom,tpda-atid = <65>;
-		qcom,dsb-elem-size = <0 32>,
-						<1 32>,
-						<5 32>,
-						<11 32>,
-						<12 32>,
-						<15 32>;
-		qcom,cmb-elem-size = <7 32>,
-						<8 32>,
-						<10 32>,
-						<15 64>;
-
-		clocks = <&rpmcc RPM_SMD_QDSS_CLK>;
-		clock-names = "apb_pclk";
-
-		ports {
-			#address-cells = <1>;
-			#size-cells = <0>;
-			port@0 {
-				reg = <0>;
-				tpda_out_funnel_qatb: endpoint {
-					remote-endpoint =
-					<&funnel_qatb_in_tpda>;
-				};
-			};
-
-			port@1 {
-				reg = <0>;
-				tpda0_in_tpdm_dl_ct: endpoint {
-					slave-mode;
-					remote-endpoint =
-					<&tpdm_dl_ct_out_tpda0>;
-				};
-			};
-
-			port@2 {
-				reg = <1>;
-				tpda1_in_funnel_gpu: endpoint {
-					slave-mode;
-					remote-endpoint =
-					<&funnel_gpu_out_tpda1>;
-				};
-			};
-
-			port@3 {
-				reg = <5>;
-				tpda5_in_funnel_turing: endpoint {
-					slave-mode;
-					remote-endpoint =
-					<&funnel_turing_out_tpda5>;
-				};
-			};
-
-			port@4 {
-				reg = <7>;
-				tpda7_in_tpdm_vsense: endpoint {
-					slave-mode;
-					remote-endpoint =
-					<&tpdm_vsense_out_tpda7>;
-				};
-			};
-
-			port@5 {
-				reg = <8>;
-				tpda8_in_tpdm_dcc: endpoint {
-					slave-mode;
-					remote-endpoint =
-					<&tpdm_dcc_out_tpda8>;
-				};
-			};
-
-			port@6 {
-				reg = <10>;
-				tpda10_in_tpdm_prng: endpoint {
-					slave-mode;
-					remote-endpoint =
-					<&tpdm_prng_out_tpda10>;
-				};
-			};
-
-			port@7 {
-				reg = <11>;
-				tpda11_in_tpdm_west: endpoint {
-					slave-mode;
-					remote-endpoint =
-					<&tpdm_west_out_tpda11>;
-				};
-			};
-
-			port@8 {
-				reg = <12>;
-				tpda12_in_tpdm_qm: endpoint {
-					slave-mode;
-					remote-endpoint =
-					<&tpdm_qm_out_tpda12>;
-				};
-			};
-
-			port@9 {
-				reg = <13>;
-				tpda13_in_tpdm_spdm: endpoint {
-					slave-mode;
-					remote-endpoint =
-					<&tpdm_spdm_out_tpda13>;
-				};
-			};
-
-			port@10 {
-				reg = <15>;
-				tpda15_in_tpdm_pimem: endpoint {
-					slave-mode;
-					remote-endpoint =
-					<&tpdm_pimem_out_tpda15>;
-				};
-			};
-
-		};
-	};
-
-	/delete-node/ cti@8867000;
-	cti_turing_q6: cti@8862000 {
-		compatible = "arm,primecell";
-		arm,primecell-periphid = <0x000bb966>;
-		reg = <0x8862000 0x1000>;
-		reg-names = "cti-base";
-
-		coresight-name = "coresight-cti-turing-q6";
-
-		clocks = <&rpmcc RPM_SMD_QDSS_CLK>;
-		clock-names = "apb_pclk";
-	};
 };
 
 #include "bengal-gdsc.dtsi"
@@ -3975,12 +3711,21 @@ tpdm_turing_llm: tpdm@8861000 {
 
 			qcom,speed-bin = <0>;
 
-			qcom,initial-pwrlevel = <5>;
-			qcom,ca-target-pwrlevel = <4>;
+			qcom,initial-pwrlevel = <6>;
+			qcom,ca-target-pwrlevel = <5>;
 
 			/* TURBO_L1 */
 			qcom,gpu-pwrlevel@0 {
 				reg = <0>;
+				qcom,gpu-freq = <1260000000>;
+				qcom,bus-freq = <7>;
+				qcom,bus-min = <7>;
+				qcom,bus-max = <7>;
+			};
+
+			/* TURBO_L1 */
+			qcom,gpu-pwrlevel@1 {
+				reg = <1>;
 				qcom,gpu-freq = <1114800000>;
 				qcom,bus-freq = <7>;
 				qcom,bus-min = <7>;
@@ -3988,8 +3733,8 @@ tpdm_turing_llm: tpdm@8861000 {
 			};
 
 			/* TURBO */
-			qcom,gpu-pwrlevel@1 {
-				reg = <1>;
+			qcom,gpu-pwrlevel@2 {
+				reg = <2>;
 				qcom,gpu-freq = <1025000000>;
 				qcom,bus-freq = <6>;
 				qcom,bus-min = <5>;
@@ -3997,8 +3742,8 @@ tpdm_turing_llm: tpdm@8861000 {
 			};
 
 			/* NOM */
-			qcom,gpu-pwrlevel@2 {
-				reg = <2>;
+			qcom,gpu-pwrlevel@3 {
+				reg = <3>;
 				qcom,gpu-freq = <785000000>;
 				qcom,bus-freq = <5>;
 				qcom,bus-min = <4>;
@@ -4006,8 +3751,8 @@ tpdm_turing_llm: tpdm@8861000 {
 			};
 
 			/* SVS_L1 */
-			qcom,gpu-pwrlevel@3 {
-				reg = <3>;
+			qcom,gpu-pwrlevel@4 {
+				reg = <4>;
 				qcom,gpu-freq = <600000000>;
 				qcom,bus-freq = <4>;
 				qcom,bus-min = <3>;
@@ -4015,8 +3760,8 @@ tpdm_turing_llm: tpdm@8861000 {
 			};
 
 			/* SVS */
-			qcom,gpu-pwrlevel@4 {
-				reg = <4>;
+			qcom,gpu-pwrlevel@5 {
+				reg = <5>;
 				qcom,gpu-freq = <465000000>;
 				qcom,bus-freq = <3>;
 				qcom,bus-min = <2>;
@@ -4024,8 +3769,8 @@ tpdm_turing_llm: tpdm@8861000 {
 			};
 
 			/* LOW SVS */
-			qcom,gpu-pwrlevel@5 {
-				reg = <5>;
+			qcom,gpu-pwrlevel@6 {
+				reg = <6>;
 				qcom,gpu-freq = <320000000>;
 				qcom,bus-freq = <2>;
 				qcom,bus-min = <1>;
@@ -4033,8 +3778,8 @@ tpdm_turing_llm: tpdm@8861000 {
 			};
 
 			/* XO */
-			qcom,gpu-pwrlevel@6 {
-				reg = <6>;
+			qcom,gpu-pwrlevel@7 {
+				reg = <7>;
 				qcom,gpu-freq = <0>;
 				qcom,bus-freq = <0>;
 				qcom,bus-min = <0>;
@@ -4184,6 +3929,10 @@ tpdm_turing_llm: tpdm@8861000 {
 &qupv3_se1_i2c {
 	status = "ok";
 	#include "pm8008.dtsi"
+};
+
+&pm8008_regulators {
+	/delete-property/ qcom,enable-ocp-broadcast;
 };
 
 &pm8008_8 {

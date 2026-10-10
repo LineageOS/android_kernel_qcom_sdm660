@@ -71,10 +71,8 @@ enum ani_akm_type {
 	ANI_AKM_TYPE_FT_RSN_PSK,
 	ANI_AKM_TYPE_RSN_PSK_SHA256,
 	ANI_AKM_TYPE_RSN_8021X_SHA256,
-#ifdef WLAN_FEATURE_SAE
 	ANI_AKM_TYPE_SAE,
 	ANI_AKM_TYPE_FT_SAE,
-#endif
 	ANI_AKM_TYPE_SUITEB_EAP_SHA256,
 	ANI_AKM_TYPE_SUITEB_EAP_SHA384,
 	ANI_AKM_TYPE_FT_SUITEB_EAP_SHA384,
@@ -218,21 +216,5 @@ typedef struct sBcnReportFields {
 	uint16_t BcnInterval;
 	uint16_t CapabilityInfo;
 } qdf_packed tBcnReportFields, *tpBcnReportFields;
-
-#define ANI_AKM_IS_WPA_WPA2(akm) \
-	((akm == ANI_AKM_TYPE_RSN) || \
-	 (akm == ANI_AKM_TYPE_RSN_PSK) || \
-	 (akm == ANI_AKM_TYPE_FT_RSN) || \
-	 (akm == ANI_AKM_TYPE_FT_RSN_PSK) || \
-	 (akm == ANI_AKM_TYPE_RSN_PSK_SHA256) || \
-	 (akm == ANI_AKM_TYPE_RSN_8021X_SHA256) || \
-	 (akm == ANI_AKM_TYPE_FILS_SHA256) || \
-	 (akm == ANI_AKM_TYPE_FILS_SHA384) || \
-	 (akm == ANI_AKM_TYPE_FT_FILS_SHA256) || \
-	 (akm == ANI_AKM_TYPE_FT_FILS_SHA384) || \
-	 (akm == ANI_AKM_TYPE_CCKM) || \
-	 (akm == ANI_AKM_TYPE_OSEN) || \
-	 (akm == ANI_AKM_TYPE_WPA) || \
-	 (akm == ANI_AKM_TYPE_WPA_PSK))
 
 #endif /* __ANI_SYSTEM_DEFS_H */

@@ -29,14 +29,6 @@
 	#size-cells = <2>;
 	memory { device_type = "memory"; reg = <0 0 0 0>; };
 
-	mem-offline {
-		compatible = "qcom,mem-offline";
-		offline-sizes = <0x1 0x40000000 0x0 0x40000000>,
-				<0x1 0xc0000000 0x0 0x80000000>,
-				<0x2 0xc0000000 0x1 0x40000000>;
-		granule = <512>;
-	};
-
 	aliases {
 		sdhc1 = &sdhc_1; /* SDC1 eMMC slot */
 		sdhc2 = &sdhc_2; /* SDC2 SD Card slot */
@@ -289,11 +281,6 @@
 		dfps_data_memory: dfps_data_region@5cf00000 {
 			reg = <0x0 0x5cf00000 0x0 0x0100000>;
 			label = "dfps_data_region";
-		};
-
-		disp_rdump_memory: disp_rdump_region@5c000000 {
-			reg = <0x0 0x5c000000 0x0 0x00f00000>;
-			label = "disp_rdump_region";
 		};
 
 		qseecom_mem: qseecom_region {
