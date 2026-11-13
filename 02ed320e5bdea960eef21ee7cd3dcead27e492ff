@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "12b71dab_e234d059",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2026-11-13T15:46:31Z",
+      "side": 1,
+      "message": "AI usage must be disclosed with `Assisted-by: LLM`",
+      "revId": "02ed320e5bdea960eef21ee7cd3dcead27e492ff",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
