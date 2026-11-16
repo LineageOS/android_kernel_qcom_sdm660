@@ -1,5 +1,23 @@
 {
-  "comments": [],
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f8f94770_6df660cc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 29715
+      },
+      "writtenOn": "2026-11-16T06:37:10Z",
+      "side": 1,
+      "message": "First i also did this partial revert to get my kernel to boot again.\nThen i changed CROSS_COMPILE from \"aarch64-linux-android-\" to \"aarch64-linux-gnu-\", now it boots again without this partial revert.",
+      "revId": "db01def0d19313d51c50cb03b8238873837f8b55",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ],
   "submitRequirementResults": [
     {
       "submitRequirement": {
