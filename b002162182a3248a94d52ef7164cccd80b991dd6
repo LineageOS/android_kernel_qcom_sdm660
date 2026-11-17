@@ -16,6 +16,24 @@
       "message": "AI usage must be disclosed with `Assisted-by: LLM`",
       "revId": "b002162182a3248a94d52ef7164cccd80b991dd6",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3676f018_90997c57",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 31885
+      },
+      "writtenOn": "2026-11-17T17:38:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "13c494d7_9f712608",
+      "revId": "b002162182a3248a94d52ef7164cccd80b991dd6",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
